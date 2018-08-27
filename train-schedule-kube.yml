@@ -41,3 +41,42 @@ spec:
           initialDelaySeconds: 15
           timeoutSeconds: 1
           periodSeconds: 10
+          
+        resources:
+          requests:
+            cpu: 200
+
+
+Configure a Horizontal Pod Autoscaler to autoscale the train schedule app.
+(Grading Coming Soon)
+Check the example-solution branch of the source code repo for an example of the code changes needed in the train-schedule-kube.yml file: https://github.com/linuxacademy/cicd-pipeline-train-schedule-autoscaling/blob/example-solution/train-schedule-kube.yml.
+
+To complete this task, you will need to do the following:
+
+Create a fork of the source code at https://github.com/linuxacademy/cicd-pipeline-train-schedule-autoscaling.
+Add a CPU resource request in train-schedule-kube.yml for the pods created by the train-schedule deployment. Check the example solution if you need to need to know where to add this.
+resources:
+  requests:
+    cpu: 200m
+
+---
+
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: train-schedule
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: train-schedule-deployment
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 50
+          
+          
